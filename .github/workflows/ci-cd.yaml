@@ -24,8 +24,7 @@ jobs:
 
     - name: Build and push Docker image to GHCR
       run: |
-        docker build -t ghcr.io/${{ github.repository_owner }}/${{ github.repository_name }}/my-image:latest .
-        docker push ghcr.io/${{ github.repository_owner }}/${{ github.repository_name }}/my-image:latest
-      # Build and push the Docker image to GHCR.
+        docker build -t ghcr.io/jochemwhite/my-image:latest .
+        docker push ghcr.io/jochemwhite/my-image:latest
 
 # Don't forget to create the GITHUB_TOKEN secret in your repository settings.
