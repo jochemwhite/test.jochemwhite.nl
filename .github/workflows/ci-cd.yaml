@@ -23,11 +23,9 @@ jobs:
       # Log in to GHCR using the GitHub token.
 
     - name: Build and push Docker image to GHCR
-      run: docker build -t ghcr.io/${{ github.repository_owner }}/${{ github.repository_name }}:latest .
-      # Build the Docker image.
-
-    - name: Push Docker image to GHCR
-      run: docker push ghcr.io/${{ github.repository_owner }}/${{ github.repository_name }}:latest
-      # Push the Docker image to GHCR.
+      run: |
+        docker build -t ghcr.io/${{ github.repository_owner }}/${{ github.repository_name }}:latest .
+        docker push ghcr.io/${{ github.repository_owner }}/${{ github.repository_name }}:latest
+      # Build and push the Docker image to GHCR.
 
 # Don't forget to create the GITHUB_TOKEN secret in your repository settings.
