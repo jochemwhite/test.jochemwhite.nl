@@ -20,19 +20,13 @@ jobs:
         run: echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
       - name: Update Package.json Version
-        run: |
-
-      - name: Build and push Docker image to GHCR
-        run: |
-          # Get the current version from package.json
+        run: | # Get the current version from package.json
           CURRENT_VERSION=$(node -p "require('./package.json').version")
 
           # Calculate the new version (e.g., increment the patch version)
           NEW_VERSION=$(npm --no-git-tag-version version patch)
 
           # Update package.json with the new version
-
-
 
           # Commit the updated package.json and package-lock.json (if updated)
           git config user.email "actions@github.com"
@@ -41,6 +35,10 @@ jobs:
 
           git commit -m "Bump version to $NEW_VERSION"
           git push
+
+      - name: Build and push Docker image to GHCR
+        run: |
+          echo "Building and pushing Docker image to GHCR... to tag $NEW_VERSION"
 
           DOCKER_TAG="ghcr.io/${{ github.repository }}:$NEW_VERSION"
           docker build -t $DOCKER_TAG .
