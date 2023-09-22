@@ -21,6 +21,9 @@ jobs:
 
       - name: Update Package.json Version
         run: |
+
+      - name: Build and push Docker image to GHCR
+        run: |
           # Get the current version from package.json
           CURRENT_VERSION=$(node -p "require('./package.json').version")
 
@@ -39,8 +42,6 @@ jobs:
           git commit -m "Bump version to $NEW_VERSION"
           git push
 
-      - name: Build and push Docker image to GHCR
-        run: |
           DOCKER_TAG="ghcr.io/${{ github.repository }}:$NEW_VERSION"
           docker build -t $DOCKER_TAG .
           docker push $DOCKER_TAG
