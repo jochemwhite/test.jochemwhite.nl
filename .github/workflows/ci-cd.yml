@@ -1,4 +1,4 @@
-name: Update Package.json Version and Build/Push Docker Image
+name: CI/CD
 
 on:
   push:
@@ -6,41 +6,36 @@ on:
       - main
 
 jobs:
-  update-and-build:
+  build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14.x'
 
-      - name: Login to GitHub Container Registry
-        run: echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+      - name: Install dependencies
+        run: npm install
 
-      - name: Update IMAGE Version
-        run: |
-          sed -i "s|image: ghcr.io/${{ github.repository }}:.*|image: ghcr.io/${{ github.repository }}:${{ github.sha }}|" kubernetes/resources/deployment.yaml
+      - name: Build and test
+        run: npm run build && npm test
 
-      - name: push updated deployment.yaml
-        run: |
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git config --global user.name "github-actions[bot]"
-          git add kubernetes/resources/deployment.yaml
-          git commit -m "Update deployment.yaml"
-          git push
-
-      - name: Build and push Docker image to GHCR
-        run: |
-          DOCKER_TAG="ghcr.io/${{ github.repository }}:${{ github.workflow_sha }}"
-          docker build -t $DOCKER_TAG .
-          docker push $DOCKER_TAG
-     
       - name: Deploy to ArgoCD
-        run: |
-          curl -X POST https://argocd.amrio.nl/api/v1/applications/{name}/sync \
-            -H "Authorization: Bearer ${{ secrets.ARGOCD_API_TOKEN }}" \
-            -H "Content-Type: application/json" \
-            -d "{\"revision\": {\"tag\": \"${{ github.sha }}\"}, \"prune\": true}"
-
+        uses: fjogeleit/http-request-action@v1
+        with:
+          url: https://argocd.amrio.nl/api/v1/applications/{name}/sync
+          method: POST
+          customHeaders: |
+            Authorization: Bearer ${{ secrets.ARGOCD_API_TOKEN }}
+            Content-Type: application/json
+          data: |
+            {
+              "revision": {
+                "tag": "${{ github.sha }}"
+              },
+              "prune": true
+            }
