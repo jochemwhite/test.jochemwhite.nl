@@ -28,16 +28,13 @@ jobs:
           NEW_VERSION=$(npm --no-git-tag-version version patch)
 
           # Update package.json with the new version
-          npm --no-git-tag-version version $NEW_VERSION
           echo "Updated package.json version to $NEW_VERSION"
 
-          # Check if there are changes to commit
-          if git diff --quiet; then
-            echo "No changes to commit."
+
           else
             # Commit the updated package.json and package-lock.json (if updated)
-            git config user.email "actions@github.com"
-            git config user.name "GitHub Actions"
+            git config user.email "jochem1111@gmail.com"
+            git config user.name "Jochemwhite"
             git add package.json
             git commit -m "Bump version to $NEW_VERSION"
             git push
