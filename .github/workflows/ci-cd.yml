@@ -36,3 +36,10 @@ jobs:
           DOCKER_TAG="ghcr.io/${{ github.repository }}:${{ github.workflow_sha }}"
           docker build -t $DOCKER_TAG .
           docker push $DOCKER_TAG
+     
+      - name: Deploy to ArgoCD
+        run: |
+          curl -X POST https://argocd.amrio.nl/api/v1/applications/{name}/sync \
+            -H "Authorization: Bearer ${{ secrets.ARGOCD_API_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d '{"revision": {"tag": "${{ github.sha }}"}, "prune": true}'
