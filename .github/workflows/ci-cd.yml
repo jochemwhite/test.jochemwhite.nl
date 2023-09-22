@@ -31,14 +31,13 @@ jobs:
           echo "Updated package.json version to $NEW_VERSION"
 
 
-          else
-            # Commit the updated package.json and package-lock.json (if updated)
-            git config user.email "jochem1111@gmail.com"
-            git config user.name "Jochemwhite"
-            git add package.json
-            git commit -m "Bump version to $NEW_VERSION"
-            git push
-          fi
+          # Commit the updated package.json and package-lock.json (if updated)
+          git config user.email "jochem1111@gmail.com"
+          git config user.name "Jochemwhite"
+          git add package.json
+          git commit -m "Bump version to $NEW_VERSION"
+          git push
+      
 
       - name: Build and push Docker image to GHCR
         run: |
