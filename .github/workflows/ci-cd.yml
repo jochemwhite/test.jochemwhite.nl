@@ -38,18 +38,21 @@ jobs:
           docker push $DOCKER_TAG
 
      
-          - name: Deploy to ArgoCD
-          uses: fjogeleit/http-request-action@v1
-          with:
-            url: https://argocd.amrio.nl/api/v1/applications/{name}/sync
-            method: POST
-            customHeaders: |
-              Authorization: Bearer ${{ secrets.ARGOCD_API_TOKEN }}
-              Content-Type: application/json
-            data: |
-              {
-                "revision": {
-                  "tag": "${{ github.sha }}"
-                },
-                "prune": true
-              }
+      - name: Deploy to ArgoCD
+        uses: fjogeleit/http-request-action@v1
+        with:
+          url: https://argocd.amrio.nl/api/v1/applications/{name}/sync
+          method: POST
+          customHeaders: |
+            Authorization: Bearer ${{ secrets.ARGOCD_API_TOKEN }}
+            Content-Type: application/json
+          data: |
+            {
+              "revision": {
+                "tag": "${{ github.sha }}"
+              },
+              "prune": true
+            }
+
+
+            
