@@ -21,7 +21,7 @@ jobs:
 
       - name: Update IMAGE Version
         run: |
-          sed -i "s|image: ghcr.io/${{ github.repository }}:.*|image: ghcr.io/${{ github.repository }}:${{ github.sha }}|" kubernetes/deployment.yaml
+          sed -i "s|image: ghcr.io/${{ github.repository }}:.*|image: ghcr.io/${{ github.repository }}:${{ github.sha }}|" kubernetes/resources/deployment.yaml
 
       - name: Build and push Docker image to GHCR
         run: |
