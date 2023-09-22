@@ -42,4 +42,5 @@ jobs:
           curl -X POST https://argocd.amrio.nl/api/v1/applications/{name}/sync \
             -H "Authorization: Bearer ${{ secrets.ARGOCD_API_TOKEN }}" \
             -H "Content-Type: application/json" \
-            -d '{"revision": {"tag": "${{ github.sha }}"}, "prune": true}'
+            -d "{\"revision\": {\"tag\": \"${{ github.sha }}\"}, \"prune\": true}"
+
