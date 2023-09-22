@@ -1,4 +1,4 @@
-name: Update Package.json Version and Build/Push Docker Image
+name: Build and Deploy
 
 on:
   push:
@@ -6,44 +6,40 @@ on:
       - main
 
 jobs:
-  update-and-build:
+  build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14.x'
 
-      - name: Login to GitHub Container Registry
-        run: echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+      - name: Install dependencies
+        run: npm install
 
-      - name: Update Package.json Version
+      - name: Build Docker image
         run: |
+          DOCKER_TAG="${{ github.repository }}:${{ github.sha }}"
+          docker build -t $DOCKER_TAG .
+          docker push $DOCKER_TAG
 
-      - name: Build and push Docker image to GHCR
+      - name: Update package.json version
         run: |
-          # Get the current version from package.json
-          CURRENT_VERSION=$(node -p "require('./package.json').version")
+          npm version patch -m "Bump version to %s [skip ci]"
+          git push --follow-tags
 
-          # Calculate the new version (e.g., increment the patch version)
-          NEW_VERSION=$(npm --no-git-tag-version version patch)
+      - name: Update deployment.yaml image URL
+        run: |
+          sed -i "s|image: ghcr.io/${{ github.repository }}:.*|image: ghcr.io/${{ github.repository }}:${{ github.sha }}|" kubernetes/deployment.yaml
 
-          # Update package.json with the new version
-
-
-
-          # Commit the updated package.json and package-lock.json (if updated)
-          git config user.email "actions@github.com"
-          git config user.name "GitHub Actions"
-          git add package.json
-
-          git commit -m "Bump version to $NEW_VERSION"
+      - name: Commit changes
+        run: |
+          git config --local user.email "jochem1111@gmail.com"
+          git config --local user.name "Jochemwhite"
+          git add Dockerfile package.json kubernetes/deployment.yaml
+          git commit -m "Update Dockerfile, package.json, and deployment.yaml"
           git push
-
-          # DOCKER_TAG="ghcr.io/${{ github.repository }}:$NEW_VERSION"
-          # docker build -t $DOCKER_TAG .
-          # docker push $DOCKER_TAG
-
-          node kubernetes/action.js
