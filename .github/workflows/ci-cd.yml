@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      NEW_VERSION: ''
+      NEW_VERSION: ""
 
     steps:
       - name: Checkout code
@@ -44,6 +44,6 @@ jobs:
         run: |
           echo "Building and pushing Docker image to GHCR... to tag $NEW_VERSION"
 
-          DOCKER_TAG="ghcr.io/${{ github.repository }}:$NEW_VERSION"
+          DOCKER_TAG="ghcr.io/${{ github.repository }}:${{ env.NEW_VERSION }}}}"
           docker build -t $DOCKER_TAG .
           docker push $DOCKER_TAG
