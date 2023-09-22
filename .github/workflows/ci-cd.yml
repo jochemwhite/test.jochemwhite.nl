@@ -9,9 +9,6 @@ jobs:
   update-and-build:
     runs-on: ubuntu-latest
 
-    env:
-      NEW_VERSION: ""
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -23,6 +20,7 @@ jobs:
         run: echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
       - name: Update Package.json Version
+        id: update-version
         run: |
           # Get the current version from package.json
           CURRENT_VERSION=$(node -p "require('./package.json').version")
@@ -40,10 +38,13 @@ jobs:
           git commit -m "Bump version to $NEW_VERSION"
           git push
 
+      - name: Set New Version for Docker Image
+        run: echo "NEW_VERSION=${{ steps.update-version.outputs.NEW_VERSION }}" >> $GITHUB_ENV
+
       - name: Build and push Docker image to GHCR
         run: |
-          echo "Building and pushing Docker image to GHCR... to tag ${{ env.NEW_VERSION }}"
+          echo "Building and pushing Docker image to GHCR... to tag $NEW_VERSION"
 
-          DOCKER_TAG="ghcr.io/${{ github.repository }}:${{ env.NEW_VERSION }}"
+          DOCKER_TAG="ghcr.io/${{ github.repository }}:$NEW_VERSION"
           docker build -t $DOCKER_TAG .
           docker push $DOCKER_TAG
