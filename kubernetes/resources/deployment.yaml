@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: test-jochemwhite
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: test-jochemwhite
+  template:
+    metadata:
+      labels:
+        app: test-jochemwhite
+    spec:
+      containers:
+      - name: test-jochemwhite
+        image: ghcr.io/jochemwhite/test.jochemwhite.nl:latest 
+        ports:
+        - containerPort: 3000
