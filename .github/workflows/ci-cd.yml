@@ -1,4 +1,4 @@
-name: Build and Push Docker Image to GHCR
+name: Update Package.json Version and Build/Push Docker Image
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  build-and-push:
+  update-and-build:
     runs-on: ubuntu-latest
 
     steps:
@@ -19,15 +19,28 @@ jobs:
       - name: Login to GitHub Container Registry
         run: echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
-      - name: Get NPM Package Version
-        id: get-version
-        uses: beaconbrigade/package-json-version@v0.3
-        with:
-          path: .
+      - name: Update Package.json Version
+        run: |
+          # Get the current version from package.json
+          CURRENT_VERSION=$(node -p "require('./package.json').version")
+
+          # Calculate the new version (e.g., increment the patch version)
+          NEW_VERSION=$(npm --no-git-tag-version version patch)
+
+          # Update package.json with the new version
+          npm --no-git-tag-version version $NEW_VERSION
+          npm install  # Update package-lock.json if it exists
+
+          # Commit the updated package.json and package-lock.json (if updated)
+          git config user.email "actions@github.com"
+          git config user.name "GitHub Actions"
+          git add package.json
+          git add package-lock.json || true
+          git commit -m "Bump version to $NEW_VERSION"
+          git push
 
       - name: Build and push Docker image to GHCR
         run: |
-          PACKAGE_VERSION="${{ steps.get-version.outputs.version }}"
-          DOCKER_TAG="ghcr.io/${{ github.repository }}:${PACKAGE_VERSION}"
+          DOCKER_TAG="ghcr.io/${{ github.repository }}:${NEW_VERSION}"
           docker build -t $DOCKER_TAG .
           docker push $DOCKER_TAG
