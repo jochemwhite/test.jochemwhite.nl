@@ -9,6 +9,9 @@ jobs:
   update-and-build:
     runs-on: ubuntu-latest
 
+    env:
+      NEW_VERSION: ''
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -25,11 +28,10 @@ jobs:
           CURRENT_VERSION=$(node -p "require('./package.json').version")
 
           # Calculate the new version (e.g., increment the patch version)
-          NEW_VERSION=$(npm --no-git-tag-version version patch)
+          export NEW_VERSION=$(npm --no-git-tag-version version patch)
 
           # Update package.json with the new version
           echo "Updated package.json version to $NEW_VERSION"
-
 
           # Commit the updated package.json and package-lock.json (if updated)
           git config user.email "jochem1111@gmail.com"
@@ -37,7 +39,6 @@ jobs:
           git add package.json
           git commit -m "Bump version to $NEW_VERSION"
           git push
-      
 
       - name: Build and push Docker image to GHCR
         run: |
