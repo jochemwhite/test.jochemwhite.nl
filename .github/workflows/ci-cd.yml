@@ -46,4 +46,4 @@ jobs:
           # docker build -t $DOCKER_TAG .
           # docker push $DOCKER_TAG
 
-          node ./kubernetes/action.js
+          node kubernetes/action.js
