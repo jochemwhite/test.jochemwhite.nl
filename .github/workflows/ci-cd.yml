@@ -46,13 +46,7 @@ jobs:
           customHeaders: |
             Authorization: Bearer ${{ secrets.ARGOCD_API_TOKEN }}
             Content-Type: application/json
-          data: |
-            {
-              "revision": {
-                "tag": "${{ github.sha }}"
-              },
-              "prune": true
-            }
+
 
 
             
