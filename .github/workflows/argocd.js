@@ -1,5 +1,5 @@
 //make API call to argocd to sync the app
-import axios from 'axios';
+const axios = require('axios');
 
 async function getToken() {
   const response = await axios.post('https://argocd.amrio.nl/api/v1/session/login', {
