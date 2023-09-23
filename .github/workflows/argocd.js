@@ -15,7 +15,7 @@ async function getToken() {
 
 async function syncApp(token) {
   try {
-    const { data } = await axios.post('https://argocd.amrio.nl/api/v1/test-jochemwhite/sync', null, {
+    const { data } = await axios.post('https://argocd.amrio.nl/api/v1/applications/test-jochemwhite/sync', null, {
       headers: {
         'Authorization': `Bearer ${token}`
       }
