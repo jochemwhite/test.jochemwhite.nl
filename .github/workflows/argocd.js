@@ -2,7 +2,7 @@ const axios = require('axios');
 
 async function getToken() {
   try {
-    const { data: { token } } = await axios.post('https://argocd.amrio.nl/api/v1/session/login', {
+    const { data: { token } } = await axios.post('https://argocd.amrio.nl/api/v1/session', {
       username: 'admin',
       password: 'Maxie2001@'
     });
@@ -15,7 +15,7 @@ async function getToken() {
 
 async function syncApp(token) {
   try {
-    const { data } = await axios.post('https://argocd.amrio.nl/api/v1/applications/argocd', null, {
+    const { data } = await axios.post('https://argocd.amrio.nl/api/v1/test-jochemwhite/sync', null, {
       headers: {
         'Authorization': `Bearer ${token}`
       }
