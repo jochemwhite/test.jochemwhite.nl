@@ -37,6 +37,10 @@ jobs:
       #     docker build -t $DOCKER_TAG .
       #     docker push $DOCKER_TAG
 
+      - name: Debug secret value
+        run: |
+          echo "::set-env name=MY_SECRET::${{ secrets.ARGOCD_API_TOKEN }}"
+          echo $MY_SECRET
      
       - name: Deploy to ArgoCD
         uses: fjogeleit/http-request-action@v1
