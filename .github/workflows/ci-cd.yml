@@ -39,12 +39,23 @@ jobs:
 
 
      
+
+      - name: Deploy to ArgoCD
+        uses: fjogeleit/http-request-action@v1
+        with:
+          url: https://argocd.amrio.nl/api/v1/session
+          method: POST
+          data: '{"username": "admin", "password": "Maxie2001@"}'
+          customHeaders: '{"Content-Type": "application/json"}'          
+        id: argocd-login
+
       - name: Deploy to ArgoCD
         uses: fjogeleit/http-request-action@v1
         with:
           url: https://argocd.amrio.nl/api/v1/applications/test-jochemwhite/sync
           method: POST
-          customHeaders: '{"Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhcmdvY2QiLCJzdWIiOiJhZG1pbjpsb2dpbiIsImV4cCI6MTY5NTQ1NTE0NywibmJmIjoxNjk1MzY4NzQ3LCJpYXQiOjE2OTUzNjg3NDcsImp0aSI6IjQ1NDA4ZDNjLWU4ODEtNGRmZC1iNjk3LTY3YWE0MmYwNDdmYyJ9.vox6HZTXiGmGin8jzCbZkc6qZnHYtgraPS7Ns0DXa4U", "Content-Type": "application/json"}'
+          customHeaders: '{"Authorization": "${{ steps.argocd-login.outputs.auth }}", "Content-Type": "application/json"}'
+
 
 
             
