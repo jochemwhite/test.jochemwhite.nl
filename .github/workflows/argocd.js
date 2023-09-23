@@ -6,6 +6,7 @@ async function getToken() {
     username: 'admin',
     password: 'Maxie2001@'
   });
+  console.log(response.data.token)
   return response.data.token;
 }
 
@@ -16,6 +17,7 @@ async function syncApp(token) {
       'Authorization': `Bearer ${token}`
     }
   });
+  console.log(response.data);
   return response.data;
 }
 
@@ -23,5 +25,7 @@ async function syncApp(token) {
 async function main() {
   const token = await getToken();
   const result = await syncApp(token);
-  console.log(result);
 }
+
+
+main();
