@@ -48,13 +48,20 @@ jobs:
             https://argocd.amrio.nl/api/v1/session \
             -c cookie.txt
 
-            - name: Log cookie.txt
-              run: cat cookie.txt
+    
 
           curl -X POST \
             -H "Content-Type: application/json" \
             -H "Authorization: $(grep argocd.auth cookie.txt | awk '{print $7}')" \
             https://argocd.amrio.nl/api/v1/applications/test-jochemwhite/sync
+
+      - name: log
+        run: | 
+          cat cookie.txt
+
+
+    
+        
 
 
 
