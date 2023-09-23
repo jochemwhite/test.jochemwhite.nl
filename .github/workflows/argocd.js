@@ -1,31 +1,39 @@
-//make API call to argocd to sync the app
 const axios = require('axios');
 
 async function getToken() {
-  const response = await axios.post('https://argocd.amrio.nl/api/v1/session/login', {
-    username: 'admin',
-    password: 'Maxie2001@'
-  });
-  console.log(response.data.token)
-  return response.data.token;
+  try {
+    const { data: { token } } = await axios.post('https://argocd.amrio.nl/api/v1/session/login', {
+      username: 'admin',
+      password: 'Maxie2001@'
+    });
+    console.log(token);
+    return token;
+  } catch (error) {
+    console.error(error.response);
+  }
 }
-
 
 async function syncApp(token) {
-  const response = await axios.post('https://argocd.amrio.nl/api/v1/applications/argocd', {
-    headers: {
-      'Authorization': `Bearer ${token}`
-    }
-  });
-  console.log(response.data);
-  return response.data;
+  try {
+    const { data } = await axios.post('https://argocd.amrio.nl/api/v1/applications/argocd', null, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    console.log(data);
+    return data;
+  } catch (error) {
+    console.error(error.response);
+  }
 }
-
 
 async function main() {
-  const token = await getToken();
-  const result = await syncApp(token);
+  try {
+    const token = await getToken();
+    const result = await syncApp(token);
+  } catch (error) {
+    console.error(error);
+  }
 }
-
 
 main();
