@@ -41,20 +41,17 @@ jobs:
      
 
       - name: Deploy to ArgoCD
-        uses: fjogeleit/http-request-action@v1
-        with:
-          url: https://argocd.amrio.nl/api/v1/session
-          method: POST
-          data: '{"username": "admin", "password": "Maxie2001@"}'
-          customHeaders: '{"Content-Type": "application/json"}'          
-        id: argocd-login
+        run: |
+          curl -X POST \
+            -H "Content-Type: application/json" \
+            -d '{"username": "admin", "password": "Maxie2001@"}' \
+            https://argocd.amrio.nl/api/v1/session \
+            -c cookie.txt
 
-      - name: Deploy to ArgoCD
-        uses: fjogeleit/http-request-action@v1
-        with:
-          url: https://argocd.amrio.nl/api/v1/applications/test-jochemwhite/sync
-          method: POST
-          customHeaders: '{"Authorization": "${{ steps.argocd-login.outputs.auth }}", "Content-Type": "application/json"}'
+          curl -X POST \
+            -H "Content-Type: application/json" \
+            -H "Authorization: $(cat cookie.txt | grep argocd.auth | awk '{print $7}')" \
+            https://argocd.amrio.nl/api/v1/applications/test-jochemwhite/sync
 
 
 
