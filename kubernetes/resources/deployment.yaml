@@ -14,6 +14,6 @@ spec:
     spec:
       containers:
       - name: test-jochemwhite
-        image: ghcr.io/jochemwhite/test.jochemwhite.nl:cc3fbd99abe45c20198805d233d35e14c60042d9
+        image: ghcr.io/jochemwhite/test.jochemwhite.nl:0c19be1241f6b2b6f71e0e574d43affa21655c43
         ports:
         - containerPort: 3000
