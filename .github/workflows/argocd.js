@@ -6,7 +6,6 @@ async function getToken() {
       username: 'admin',
       password: 'Maxie2001@'
     });
-    console.log(token);
     return token;
   } catch (error) {
     console.error(error.response);
@@ -20,7 +19,6 @@ async function syncApp(token) {
         'Authorization': `Bearer ${token}`
       }
     });
-    console.log(data);
     return data;
   } catch (error) {
     console.error(error.response);
